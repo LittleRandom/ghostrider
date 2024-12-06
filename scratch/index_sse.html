@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamAPI Command Example</title>
+</head>
+
+<body>
+    <h1>StreamAPI Output Stream</h1>
+    <button id="startTest">Run</button>
+    <pre id="output"></pre>
+    <script>
+        const output = document.getElementById("output");
+
+        document.getElementById("startTest").onclick = function() {myFunction()};
+        function myFunction() {
+            var s = document.getElementById("output");
+            s.textContent = "";
+            fetch("http://localhost:8000/start_ping").then()
+
+        }
+
+        // Fetch the stream from the backend
+        fetch("http://localhost:8000")
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                // Read the stream in chunks
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+
+                            console.log("WHAT TH FUCK")
+                            return; // Stream completed
+                        }
+
+                        // Decode and append the chunk to the output
+                        output.textContent += decoder.decode(value, { stream: true });
+                        read();
+                        console.log("done1")
+
+                    });
+                }
+
+                read();
+            })
+            .catch(error => console.error("Error fetching stream:", error));
+    </script>
+</body>
+
+</html>
